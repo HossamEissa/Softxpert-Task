@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Collection;
 
 class Task extends Model
 {
@@ -36,46 +37,33 @@ class Task extends Model
 
 ####################################### Relations ###################################################
 
-    /**
-     * Get the user who created this task (manager)
-     */
+
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
     }
 
-    /**
-     * Get the user assigned to this task
-     */
+
     public function assignee(): BelongsTo
     {
         return $this->belongsTo(User::class, 'assignee_id');
     }
 
-    /**
-     * Get all task dependencies (tasks this task depends on)
-     */
+
     public function taskDependencies(): HasMany
     {
         return $this->hasMany(TaskDependency::class, 'task_id');
     }
 
-    /**
-     * Get all tasks this task depends on
-     */
     public function dependencies()
     {
         return $this->belongsToMany(Task::class, 'task_dependencies', 'task_id', 'dependency_id')
             ->withTimestamps();
     }
 
-    /**
-     * Get all tasks that depend on this task
-     */
     public function dependents()
     {
-        return $this->belongsToMany(Task::class, 'task_dependencies', 'dependency_id', 'task_id')
-            ->withTimestamps();
+        return $this->belongsToMany(Task::class, 'task_dependencies', 'dependency_id', 'task_id')->withTimestamps();
     }
 
 ####################################### End Relations ###############################################
@@ -86,76 +74,42 @@ class Task extends Model
 
 ####################################### Helper Methods ##############################################
 
-    /**
-     * Check if all dependencies are completed
-     */
+
     public function allDependenciesCompleted(): bool
     {
-        $dependencies = $this->dependencies;
-        
-        if ($dependencies->isEmpty()) {
-            return true;
-        }
-
-        return $dependencies->every(function ($dependency) {
-            return $dependency->status === TaskStatusEnum::Completed;
-        });
+        return $this->dependencies->isEmpty() ? true : $this->dependencies->every(fn($dependency) => $dependency->status === TaskStatusEnum::Completed);
     }
 
-    /**
-     * Get all dependencies recursively (entire dependency tree)
-     */
-    public function getAllDependenciesRecursively(): array
+    public function getAllDependenciesRecursively(): Collection
     {
-        $allDependencies = [];
-        $this->collectDependenciesRecursively($this, $allDependencies);
-        return $allDependencies;
+        $collected = collect();
+        $this->collectDependenciesRecursively($this, $collected);
+        return $collected;
     }
 
-    /**
-     * Recursively collect all dependencies
-     */
-    private function collectDependenciesRecursively(Task $task, array &$collected): void
+    private function collectDependenciesRecursively(Task $task, Collection &$collected): void
     {
-        $dependencies = $task->dependencies;
-        
-        foreach ($dependencies as $dependency) {
-            // Avoid circular references
-            if (!in_array($dependency->id, array_column($collected, 'id'))) {
-                $collected[] = $dependency;
+        foreach ($task->dependencies as $dependency) {
+            if (! $collected->pluck('id')->contains($dependency->id)) {
+                $collected->push($dependency);
                 $this->collectDependenciesRecursively($dependency, $collected);
             }
         }
     }
 
-    /**
-     * Check if adding a dependency would create a circular dependency
-     */
     public function wouldCreateCircularDependency(int $dependencyId): bool
     {
-        // If the dependency is the task itself
         if ($this->id === $dependencyId) {
             return true;
         }
 
-        // Check if any of the task's dependents (tasks that depend on this task)
-        // would create a circular dependency
-        $dependencyTask = static::find($dependencyId);
+        $dependencyTask = static::whereId($dependencyId)->first();
         if (!$dependencyTask) {
             return false;
         }
 
-        // Get all tasks that depend on the dependency task recursively
-        $dependencyDependents = $dependencyTask->getAllDependenciesRecursively();
-        
-        // Check if current task is in the dependency's dependency tree
-        foreach ($dependencyDependents as $dependent) {
-            if ($dependent->id === $this->id) {
-                return true;
-            }
-        }
-
-        return false;
+        $allDependencyIds = $dependencyTask->getAllDependenciesRecursively()->pluck('id');
+        return $allDependencyIds->contains($this->id);
     }
 
 ####################################### End Helper Methods ##########################################

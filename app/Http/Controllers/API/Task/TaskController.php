@@ -60,7 +60,7 @@ class TaskController extends Controller
         }
     }
 
-
+    // Done
     public function show(Task $task): JsonResponse
     {
         $this->authorize('view', $task);
@@ -73,8 +73,6 @@ class TaskController extends Controller
 
     public function update(UpdateTaskRequest $request, Task $task): JsonResponse
     {
-        $this->authorize('update', $task);
-
         try {
             $task = $this->taskService->updateTask($task, $request->validated());
 

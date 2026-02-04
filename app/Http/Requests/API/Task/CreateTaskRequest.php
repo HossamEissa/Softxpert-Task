@@ -2,10 +2,9 @@
 
 namespace App\Http\Requests\API\Task;
 
-use App\Enum\TaskStatusEnum;
 use App\Models\Task;
+use App\Rules\DependenciesDueDateRule;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 class CreateTaskRequest extends FormRequest
 {
@@ -27,7 +26,7 @@ class CreateTaskRequest extends FormRequest
         return [
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'due_date' => 'required|date|after_or_equal:today',
+            'due_date' => ['required', 'date', 'after_or_equal:today', new DependenciesDueDateRule($this->dependency_ids),],
             'dependency_ids' => 'nullable|array',
             'dependency_ids.*' => 'required_with:dependency_ids|integer|exists:tasks,id',
         ];
@@ -44,25 +43,5 @@ class CreateTaskRequest extends FormRequest
             'due_date.after_or_equal' => 'Due date must be today or a future date',
             'dependency_ids.*.exists' => 'One or more dependency tasks do not exist',
         ];
-    }
-
-    /**
-     * Additional validation after rules pass
-     */
-    public function withValidator($validator)
-    {
-        $validator->after(function ($validator) {
-            if ($this->has('dependency_ids') && is_array($this->dependency_ids)) {
-                $dependencyIds = $this->dependency_ids;
-                $dueDate = $this->due_date;
-
-                $invalidDependencies = Task::whereIn('id', $dependencyIds)->where('due_date', '>', $dueDate)->get(['id', 'title', 'due_date']);
-
-                if ($invalidDependencies->isNotEmpty()) {
-                    $taskTitles = $invalidDependencies->pluck('title')->implode(', ');
-                    $validator->errors()->add('due_date', "The due date must be equal to or after the due dates of all dependency tasks. Invalid dependencies: {$taskTitles}");
-                }
-            }
-        });
     }
 }

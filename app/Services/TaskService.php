@@ -31,11 +31,7 @@ class TaskService
             $task->save();
 
             if (array_key_exists('dependency_ids', $data)) {
-                $task->taskDependencies()->delete();
-
-                if (!empty($data['dependency_ids'])) {
-                    $this->addDependenciesToTask($task, $data['dependency_ids']);
-                }
+                $task->taskDependencies()->sync($data['dependency_ids'] ?? []);
             }
 
             return $task->fresh(['dependencies', 'creator', 'assignee']);
