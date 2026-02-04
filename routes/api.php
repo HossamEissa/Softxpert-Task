@@ -6,6 +6,7 @@ use App\Http\Controllers\API\Auth\LoginController;
 use App\Http\Controllers\API\Auth\RegistrationController;
 use App\Http\Controllers\API\Auth\ResetPasswordController;
 use App\Http\Controllers\API\Profile\ProfileController;
+use App\Http\Controllers\API\Task\TaskController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -15,7 +16,6 @@ Route::prefix('list')->group(function () {
 
 });
 ###################################### End Drop-Down ##########################################
-
 
 
 ################################# Authentication ##############################################
@@ -30,13 +30,25 @@ Route::post('reset-password', [ResetPasswordController::class, 'passwordReset'])
 
 ################################# End Authentication ##############################################
 
-######################################## Common API ##########################################
 Route::middleware('auth:sanctum')->group(function () {
+######################################## Profile ##########################################
     Route::get('me', [ProfileController::class, 'me']);
     Route::put('update-profile', [ProfileController::class, 'update']);
     Route::post('change-password', [ProfileController::class, 'changePassword']);
     Route::post('logout', [ProfileController::class, 'logout']);
     Route::delete('delete-profile', [ProfileController::class, 'destroy']);
+######################################## End Profile #######################################
+
+######################################## Task Management ##################################
+
+    Route::apiResource('tasks', TaskController::class);
+
+    // Assign task to user (managers only - requires task.assign permission)
+    Route::post('tasks/{task}/assign', [TaskController::class, 'assign']);
+
+    // Update task status (users and managers - requires task.update-status permission)
+    Route::patch('tasks/{task}/status', [TaskController::class, 'updateStatus']);
+######################################## End Task Management ##############################
+
 });
 
-######################################## End Common API #######################################

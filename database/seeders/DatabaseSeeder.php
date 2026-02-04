@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             RunInProductionSeeder::class,
             UserSeeder::class,
+            TaskSeeder::class,
         ]);
     }
 }
