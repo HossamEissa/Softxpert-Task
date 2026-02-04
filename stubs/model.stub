@@ -1,0 +1,26 @@
+<?php
+
+namespace {{ namespace }};
+
+{{ factoryImport }}
+use Illuminate\Database\Eloquent\Model;
+use App\Traits\DynamicPagination;
+use App\Traits\Filterable;
+use App\Traits\Searchable;
+use App\Traits\Sortable;
+
+class {{ class }} extends Model
+{
+    use  HasFactory , DynamicPagination , Filterable , Searchable , Sortable;
+    protected $fillable = [
+
+    ];
+
+####################################### Relations ###################################################
+
+####################################### End Relations ###############################################
+
+################################ Accessors and Mutators #############################################
+
+################################ End Accessors and Mutators #########################################
+}
