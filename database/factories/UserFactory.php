@@ -24,41 +24,15 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
-        $defaultProfile = $this->faker->randomElement([
-            Company::class,
-        ]);
 
         return [
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
-            'country_code' => $this->faker->countryCode(),
-            'country_calling_code' => '+' . $this->faker->randomElement(['1', '44', '20', '91']),
-            'phone_number' => $this->faker->unique()->phoneNumber(),
+            'avatar' => fake()->imageUrl(category: 'people'),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
-            'profile_type' => $defaultProfile,
-            'profile_id' => $defaultProfile::factory()->create()->id,
-            'disk' => 'public',
         ];
     }
 
-    /**
-     * Indicate that the model's email address should be unverified.
-     */
-    public function unverified(): static
-    {
-        return $this->state(fn(array $attributes) => [
-            'email_verified_at' => null,
-        ]);
-    }
-
-    public function withProfileType(mixed $profileType): static
-    {
-
-        return $this->state([
-            'profile_type' => $profileType,
-            'profile_id' => $profileType::factory()->create()->id ?? $this->faker->randomNumber(1),
-        ]);
-    }
 }

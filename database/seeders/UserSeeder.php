@@ -18,16 +18,19 @@ class  UserSeeder extends Seeder
      */
     public function run(): void
     {
-        $superAdmin = User::factory()->create([
-            'name' => 'Super Admin',
-            'email' => 'super@admin.com',
+        $manager = User::factory()->create([
+            'name' => 'Manager',
+            'email' => 'manager@admin.com',
             'password' => '12345678',
-            'profile_type' => 'super-admin',
-            'profile_id' => 1,
         ]);
-        $superAdmin->assignRole('super-admin');
+        $manager->assignRole('manager');
 
-
+        $user = User::factory()->create([
+            'name' => 'User',
+            'email' => 'user@admin.com',
+            'password' => '12345678',
+        ]);
+        $user->assignRole('user');
 
 
     }

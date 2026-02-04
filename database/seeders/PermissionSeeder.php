@@ -14,15 +14,13 @@ class PermissionSeeder extends Seeder
     public function run(): void
     {
         $permissions = [
-            'super-admin' => [
-
-
-            ],
-            'company' => [
-
-            ],
-            'user' => [
-
+            'task' => [
+                'create',
+                'update',
+                'assign',
+                'view',
+                'view-all',
+                'update-status',
             ],
         ];
 
@@ -31,7 +29,6 @@ class PermissionSeeder extends Seeder
             foreach ($value as $permission) {
                 Permission::query()->firstOrCreate([
                     'name' => $key . '.' . $permission,
-                    'role_name' => $key,
                 ]);
             }
         }

@@ -14,25 +14,30 @@ class RoleSeeder extends Seeder
      */
     public function run(): void
     {
-        $roles = [
-            'super-admin',
-            'company',
-            'member'
+        $rolePermissions = [
+            'manager' => [
+                'task.create',
+                'task.update',
+                'task.assign',
+                'task.view-all',
+                'task.view',
+            ],
+            'user' => [
+                'task.view',
+                'task.update-status',
+            ]
         ];
 
-        foreach ($roles as $role) {
-            $role = Role::query()->firstOrCreate([
-                'name' => $role,
+        foreach ($rolePermissions as $roleName => $permissionNames) {
+            $role = Role::firstOrCreate([
+                'name' => $roleName,
             ]);
 
-            $permissions = Permission::query()
-                ->where('role_name', $role->name)
-                ->get()
-                ->pluck('name')
-                ->toArray();
 
+            $permissions = Permission::whereIn('name', $permissionNames)->get();
 
             $role->syncPermissions($permissions);
         }
     }
+
 }
