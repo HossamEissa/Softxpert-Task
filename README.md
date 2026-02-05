@@ -380,13 +380,6 @@ docker-compose exec app php artisan schedule:work
 php artisan schedule:work
 ```
 
-### Scheduler Setup (Production)
-
-Add to crontab:
-```bash
-* * * * * cd /path/to/project && php artisan schedule:run >> /dev/null 2>&1
-```
-
 ---
 
 ## Troubleshooting
