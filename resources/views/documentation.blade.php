@@ -133,6 +133,7 @@
                 <a href="#manual-setup" class="nav-link text-gray-300 hover:text-indigo-400 font-medium">Manual Setup</a>
                 <a href="#test-users" class="nav-link text-gray-300 hover:text-indigo-400 font-medium">Test Users</a>
                 <a href="#quick-start" class="nav-link text-gray-300 hover:text-indigo-400 font-medium">Quick Start</a>
+                <a href="#database" class="nav-link text-gray-300 hover:text-indigo-400 font-medium">Database</a>
                 <a href="#api-docs" class="nav-link text-gray-300 hover:text-indigo-400 font-medium">API Docs</a>
                 <a href="#troubleshooting" class="nav-link text-gray-300 hover:text-indigo-400 font-medium">Troubleshooting</a>
             </div>
@@ -499,6 +500,82 @@ Authorization: Bearer {token}
 {
   "assignee_id": 2
 }</pre>
+                </div>
+            </div>
+        </section>
+
+        <section id="database" class="section mb-20">
+            <h2 class="text-4xl font-bold mb-8 text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">Database Schema</h2>
+            
+            <div class="card bg-gradient-to-br from-purple-900/40 to-violet-900/40 p-8 rounded-xl border-2 border-purple-500/50 hover:shadow-2xl hover:shadow-purple-500/30 mb-6">
+                <h3 class="font-bold text-purple-200 mb-3 text-2xl flex items-center">
+                    <span class="text-3xl mr-3">🗂️</span> Entity-Relationship Diagram
+                </h3>
+                <p class="text-purple-100 mb-5">Interactive database schema diagram with all tables and relationships:</p>
+                <a href="https://dbdiagram.io/d/69843dffbd82f5fce2b8728c" target="_blank" 
+                   class="inline-flex items-center bg-gradient-to-r from-purple-600 to-violet-600 hover:from-purple-500 hover:to-violet-500 text-white font-semibold px-8 py-4 rounded-xl transform hover:scale-105 transition-all">
+                    View ERD Diagram 
+                    <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                    </svg>
+                </a>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="card p-6 rounded-xl">
+                    <h3 class="font-semibold text-white mb-4 text-lg flex items-center">
+                        <span class="text-2xl mr-2">📊</span> Database Tables
+                    </h3>
+                    <ul class="text-sm text-gray-300 space-y-2">
+                        <li class="flex items-start">
+                            <span class="text-purple-400 mr-2">•</span>
+                            <div>
+                                <strong class="text-white">Users</strong> - System users with authentication
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-purple-400 mr-2">•</span>
+                            <div>
+                                <strong class="text-white">Tasks</strong> - Task management with status, due dates, assignments
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-purple-400 mr-2">•</span>
+                            <div>
+                                <strong class="text-white">Task Dependencies</strong> - Many-to-many self-referencing relationship
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-purple-400 mr-2">•</span>
+                            <div>
+                                <strong class="text-white">Roles & Permissions</strong> - RBAC using Spatie Laravel Permission
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="card p-6 rounded-xl">
+                    <h3 class="font-semibold text-white mb-4 text-lg flex items-center">
+                        <span class="text-2xl mr-2">🔗</span> Key Relationships
+                    </h3>
+                    <ul class="text-sm text-gray-300 space-y-2">
+                        <li class="flex items-start">
+                            <span class="text-purple-400 mr-2">•</span>
+                            <span>Users can create and be assigned to multiple tasks</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-purple-400 mr-2">•</span>
+                            <span>Tasks can have multiple dependencies (hierarchical structure)</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-purple-400 mr-2">•</span>
+                            <span>Tasks can be a dependency for multiple other tasks</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-purple-400 mr-2">•</span>
+                            <span>Users have roles with specific permissions</span>
+                        </li>
+                    </ul>
                 </div>
             </div>
         </section>

@@ -301,6 +301,25 @@ Content-Type: application/json
 
 ---
 
+## Database Schema
+
+**Interactive Entity-Relationship Diagram:**
+
+🗂️ **[View Database ERD Diagram](https://dbdiagram.io/d/69843dffbd82f5fce2b8728c)**
+
+The database schema includes:
+- **Users** - System users with authentication
+- **Tasks** - Task management with status, due dates, assignments
+- **Task Dependencies** - Many-to-many self-referencing relationship for task hierarchies
+- **Roles & Permissions** - Role-based access control using Spatie Laravel Permission
+
+Key relationships:
+- Users can create and be assigned to multiple tasks
+- Tasks can have multiple dependencies (and be a dependency for multiple tasks)
+- Users have roles with specific permissions
+
+---
+
 ## API Documentation
 
 **Complete API documentation with examples is available in Postman:**

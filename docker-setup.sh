@@ -8,6 +8,10 @@ if [ ! -f .env ]; then
     cp .env.example .env
 fi
 
+# Stop any existing containers
+echo "🛑 Stopping existing containers..."
+docker-compose down
+
 # Build and start containers
 echo "🏗️  Building and starting Docker containers..."
 docker-compose up -d --build

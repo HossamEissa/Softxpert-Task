@@ -34,12 +34,12 @@ Route::middleware('auth:sanctum')->group(function () {
 
 ######################################## Task Management ##################################
 
-    Route::apiResource('tasks', TaskController::class);
+    Route::apiResource('tasks', TaskController::class)->except(['destroy']);
 
     Route::post('tasks/{task}/assign', [TaskController::class, 'assign']);
 
     Route::patch('tasks/{task}/status', [TaskController::class, 'updateStatus']);
-    
+
 ######################################## End Task Management ##############################
 
 });
