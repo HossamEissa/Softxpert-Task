@@ -14,6 +14,7 @@ A RESTful API for managing tasks with automatic dependency handling, role-based 
 ✅ **Scheduled Overdue Detection** - Daily command automatically marks overdue tasks as delayed  
 ✅ **Advanced Filtering** - Search, filter, sort on all task endpoints  
 ✅ **Single-User Assignment** - Each task is assigned to only one user  
+✅ **Comprehensive Test Suite** - 101 passing tests with Pest PHP covering all features  
 
 ---
 
@@ -553,6 +554,32 @@ database/
 
 ---
 
+## Testing
+
+**101 passing tests** using Pest PHP covering authentication, CRUD operations, dependencies, permissions, and business logic.
+
+### Running Tests
+
+```bash
+# With Docker
+docker-compose exec app php artisan test
+
+# Without Docker
+php artisan test
+```
+
+### Test Coverage
+- Authentication (8 tests) - Registration, login, logout
+- Task CRUD (13 tests) - Create, read, update with permissions
+- Dependencies (6 tests) - Assignment, validation, synchronization
+- Status Management (10 tests) - Transitions, completion checks
+- Circular Dependencies (6 tests) - Prevention and detection
+- Role Permissions (24 tests) - RBAC and policy testing
+- Unit Tests (26 tests) - Models and services
+- Scheduled Tasks (6 tests) - Overdue detection
+
+---
+
 ## Tech Stack
 
 - **Framework**: Laravel 12
@@ -560,10 +587,10 @@ database/
 - **Database**: MySQL 8.0+
 - **Authentication**: Laravel Sanctum
 - **Authorization**: Spatie Laravel Permission
+- **Testing**: Pest PHP
 - **Containerization**: Docker & Docker Compose
 - **Web Server**: Nginx
 - **Mail**: Log Driver (development) / SMTP (production)
-- **Testing**: Pest PHP (optional)
 
 ---
 

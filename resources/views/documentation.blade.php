@@ -135,6 +135,7 @@
                 <a href="#quick-start" class="nav-link text-gray-300 hover:text-indigo-400 font-medium">Quick Start</a>
                 <a href="#database" class="nav-link text-gray-300 hover:text-indigo-400 font-medium">Database</a>
                 <a href="#api-docs" class="nav-link text-gray-300 hover:text-indigo-400 font-medium">API Docs</a>
+                <a href="#testing" class="nav-link text-gray-300 hover:text-indigo-400 font-medium">Testing</a>
                 <a href="#troubleshooting" class="nav-link text-gray-300 hover:text-indigo-400 font-medium">Troubleshooting</a>
             </div>
         </div>
@@ -659,6 +660,76 @@ Authorization: Bearer {token}
                             <span class="text-green-500 mr-2 font-mono">POST</span> /api/change-password
                         </li>
                     </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="testing" class="section mb-20">
+            <h2 class="text-4xl font-bold mb-8 text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">Testing</h2>
+            
+            <div class="card bg-gradient-to-br from-green-900/40 to-teal-900/40 p-8 rounded-xl border-2 border-green-500/50 mb-8">
+                <h3 class="font-bold text-green-200 mb-3 text-2xl flex items-center">
+                    <span class="text-3xl mr-3">✅</span> Comprehensive Test Suite
+                </h3>
+                <p class="text-green-100 text-lg mb-2"><strong class="text-white">101 passing tests</strong> using Pest PHP</p>
+                <p class="text-green-200 text-sm">Covering authentication, CRUD operations, dependencies, permissions, and business logic</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6 mb-6">
+                <div class="card p-6 rounded-xl">
+                    <h3 class="font-semibold text-white mb-4 text-lg flex items-center">
+                        <span class="text-2xl mr-2">🐳</span> With Docker
+                    </h3>
+                    <pre class="code-block text-xs"># Run all tests
+docker-compose exec app php artisan test</pre>
+                </div>
+
+                <div class="card p-6 rounded-xl">
+                    <h3 class="font-semibold text-white mb-4 text-lg flex items-center">
+                        <span class="text-2xl mr-2">💻</span> Without Docker
+                    </h3>
+                    <pre class="code-block text-xs"># Run all tests
+php artisan test</pre>
+                </div>
+            </div>
+
+            <div class="card p-6 rounded-xl">
+                <h3 class="font-semibold text-white mb-4 text-lg flex items-center">
+                    <span class="text-2xl mr-2">📊</span> Test Coverage
+                </h3>
+                <div class="grid md:grid-cols-2 gap-3 text-sm">
+                    <div class="flex items-center text-gray-300 hover:text-indigo-400 transition-colors">
+                        <span class="w-2 h-2 bg-green-500 rounded-full mr-3"></span>
+                        Authentication (8 tests) - Registration, login, logout
+                    </div>
+                    <div class="flex items-center text-gray-300 hover:text-indigo-400 transition-colors">
+                        <span class="w-2 h-2 bg-green-500 rounded-full mr-3"></span>
+                        Task CRUD (13 tests) - Create, read, update with permissions
+                    </div>
+                    <div class="flex items-center text-gray-300 hover:text-indigo-400 transition-colors">
+                        <span class="w-2 h-2 bg-green-500 rounded-full mr-3"></span>
+                        Dependencies (6 tests) - Assignment, validation, sync
+                    </div>
+                    <div class="flex items-center text-gray-300 hover:text-indigo-400 transition-colors">
+                        <span class="w-2 h-2 bg-green-500 rounded-full mr-3"></span>
+                        Status Management (10 tests) - Transitions, checks
+                    </div>
+                    <div class="flex items-center text-gray-300 hover:text-indigo-400 transition-colors">
+                        <span class="w-2 h-2 bg-green-500 rounded-full mr-3"></span>
+                        Circular Dependencies (6 tests) - Prevention, detection
+                    </div>
+                    <div class="flex items-center text-gray-300 hover:text-indigo-400 transition-colors">
+                        <span class="w-2 h-2 bg-green-500 rounded-full mr-3"></span>
+                        Role Permissions (24 tests) - RBAC, policy testing
+                    </div>
+                    <div class="flex items-center text-gray-300 hover:text-indigo-400 transition-colors">
+                        <span class="w-2 h-2 bg-green-500 rounded-full mr-3"></span>
+                        Unit Tests (26 tests) - Models and services
+                    </div>
+                    <div class="flex items-center text-gray-300 hover:text-indigo-400 transition-colors">
+                        <span class="w-2 h-2 bg-green-500 rounded-full mr-3"></span>
+                        Scheduled Tasks (6 tests) - Overdue detection
+                    </div>
                 </div>
             </div>
         </section>

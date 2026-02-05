@@ -58,7 +58,7 @@ class ProfileController extends Controller
 
     public function logout(Request $request)
     {
-        $request->user()->currentAccessToken()->delete();
+        $request->user()->currentAccessToken()?->delete();
 
         return $this->respondWithUpdated(message: 'Logged out successfully.');
     }
