@@ -36,7 +36,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::apiResource('tasks', TaskController::class);
 
-    // Assign task to user (managers only - requires task.assign permission)
     Route::post('tasks/{task}/assign', [TaskController::class, 'assign']);
 
     // Update task status (users and managers - requires task.update-status permission)

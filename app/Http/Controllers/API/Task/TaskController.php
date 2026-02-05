@@ -7,7 +7,7 @@ use App\Http\Requests\API\Task\AssignTaskRequest;
 use App\Http\Requests\API\Task\CreateTaskRequest;
 use App\Http\Requests\API\Task\UpdateTaskRequest;
 use App\Http\Requests\API\Task\UpdateTaskStatusRequest;
-use App\Http\Resources\TaskResource;
+use App\Http\Resources\API\TaskResource;
 use App\Models\Task;
 use App\Services\TaskService;
 use Exception;
@@ -70,7 +70,7 @@ class TaskController extends Controller
         return $this->respondWithItem(new TaskResource($task));
     }
 
-
+    // Done
     public function update(UpdateTaskRequest $request, Task $task): JsonResponse
     {
         try {
@@ -82,40 +82,26 @@ class TaskController extends Controller
         }
     }
 
-
-    public function assign(AssignTaskRequest $request, int $id): JsonResponse
+    // Done
+    public function assign(AssignTaskRequest $request, Task $task): JsonResponse
     {
-        $task = Task::with('dependencies')->find($id);
-
-        if (!$task) {
-            return $this->errorNotFound('Task not found');
-        }
-
-        $this->authorize('assign', $task);
+        $task->load('dependencies');
 
         try {
             $result = $this->taskService->assignTask($task, $request->assignee_id);
-
-            return $this->respond([
-                'status' => $this->getSuccess(),
-                'message' => 'Task assigned successfully. ' . count($result['assigned_tasks']) . ' task(s) assigned in total.',
-                'data' => [
-                    'task' => new TaskResource($result['main_task']),
-                    'assigned_tasks' => $result['assigned_tasks'],
-                ],
-            ]);
+            $data = [
+                'task' => new TaskResource($result['main_task']),
+                'assigned_tasks' => $result['assigned_tasks'],
+            ];
+            $message =  'Task assigned successfully. ' . count($result['assigned_tasks']) . ' task(s) assigned in total.';
+            return $this->respondWithItem($data, $message);
         } catch (Exception $e) {
             return $this->setStatusCode(400)->errorStatus($e->getMessage());
         }
     }
 
-    public function updateStatus(UpdateTaskStatusRequest $request, int $id): JsonResponse
+    public function updateStatus(UpdateTaskStatusRequest $request, Task $task): JsonResponse
     {
-        $task = Task::find($id);
-
-        if (!$task) {
-            return $this->errorNotFound('Task not found');
-        }
 
         $this->authorize('updateStatus', $task);
 
@@ -128,14 +114,8 @@ class TaskController extends Controller
         }
     }
 
-    public function destroy(Request $request, int $id): JsonResponse
+    public function destroy(Request $request, Task $task): JsonResponse
     {
-        $task = Task::find($id);
-
-        if (!$task) {
-            return $this->errorNotFound('Task not found');
-        }
-
         $this->authorize('delete', $task);
 
         try {

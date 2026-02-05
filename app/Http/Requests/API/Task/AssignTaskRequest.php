@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\API\Task;
 
+use App\Models\Task;
 use Illuminate\Foundation\Http\FormRequest;
 
 class AssignTaskRequest extends FormRequest
@@ -11,7 +12,7 @@ class AssignTaskRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return $this->user()?->can('task.assign') ?? false;
     }
 
     /**
@@ -35,5 +36,22 @@ class AssignTaskRequest extends FormRequest
             'assignee_id.required' => 'Assignee user ID is required',
             'assignee_id.exists' => 'The selected user does not exist',
         ];
+    }
+
+    /**
+     * Additional validation after rules pass
+     */
+    public function withValidator($validator)
+    {
+        $validator->after(function ($validator) {
+            $task = $this->route('task');
+            
+            if ($task && $task->assignee_id !== null) {
+                $validator->errors()->add(
+                    'task',
+                    'This task is already assigned.'
+                );
+            }
+        });
     }
 }

@@ -31,7 +31,7 @@ class TaskService
             $task->save();
 
             if (array_key_exists('dependency_ids', $data)) {
-                $task->taskDependencies()->sync($data['dependency_ids'] ?? []);
+                $task->dependencies()->sync($data['dependency_ids'] ?? []);
             }
 
             return $task->fresh(['dependencies', 'creator', 'assignee']);
@@ -59,12 +59,10 @@ class TaskService
                 }
             }
 
-            // Assign the main task
             $task->assignee_id = $assigneeId;
             $task->status = TaskStatusEnum::Assigned;
             $task->save();
 
-            // Add main task to the beginning of assigned tasks
             array_unshift($assignedTasks, [
                 'id' => $task->id,
                 'title' => $task->title,
@@ -78,13 +76,7 @@ class TaskService
         });
     }
 
-    /**
-     * Update task status
-     *
-     * @param Task $task
-     * @param string $status
-     * @return Task
-     */
+
     public function updateTaskStatus(Task $task, string $status): Task
     {
         $task->status = TaskStatusEnum::from($status);

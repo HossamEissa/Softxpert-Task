@@ -35,7 +35,7 @@ class Task extends Model
     protected $sortableFields = ['id', 'title', 'due_date', 'status', 'created_at'];
     protected $filterableFields = ['status', 'assignee_id', 'created_by', 'due_date'];
 
-####################################### Relations ###################################################
+    ####################################### Relations ###################################################
 
 
     public function creator(): BelongsTo
@@ -66,13 +66,13 @@ class Task extends Model
         return $this->belongsToMany(Task::class, 'task_dependencies', 'dependency_id', 'task_id')->withTimestamps();
     }
 
-####################################### End Relations ###############################################
+    ####################################### End Relations ###############################################
 
-################################ Accessors and Mutators #############################################
+    ################################ Accessors and Mutators #############################################
 
-################################ End Accessors and Mutators #########################################
+    ################################ End Accessors and Mutators #########################################
 
-####################################### Helper Methods ##############################################
+    ####################################### Helper Methods ##############################################
 
 
     public function allDependenciesCompleted(): bool
@@ -83,19 +83,28 @@ class Task extends Model
     public function getAllDependenciesRecursively(): Collection
     {
         $collected = collect();
-        $this->collectDependenciesRecursively($this, $collected);
+        $visited = collect();
+
+        $this->collectDependencies($this, $collected, $visited);
+
         return $collected;
     }
 
-    private function collectDependenciesRecursively(Task $task, Collection &$collected): void
+    private function collectDependencies(Task $task, Collection $collected, Collection $visited): void
     {
         foreach ($task->dependencies as $dependency) {
-            if (! $collected->pluck('id')->contains($dependency->id)) {
-                $collected->push($dependency);
-                $this->collectDependenciesRecursively($dependency, $collected);
+
+            if ($visited->contains($dependency->id)) {
+                continue;
             }
+
+            $visited->push($dependency->id);
+            $collected->push($dependency);
+
+            $this->collectDependencies($dependency, $collected, $visited);
         }
     }
+
 
     public function wouldCreateCircularDependency(int $dependencyId): bool
     {
@@ -112,5 +121,5 @@ class Task extends Model
         return $allDependencyIds->contains($this->id);
     }
 
-####################################### End Helper Methods ##########################################
+    ####################################### End Helper Methods ##########################################
 }
