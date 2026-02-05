@@ -25,21 +25,7 @@ class RegistrationController extends Controller
         try {
             $data = $this->uploadFiles($data);
 
-            if (isset($data['profile'])) {
-                $profile = $data['profile_type']::query()->create($data['profile']);
-            } else {
-                $profile = $data['profile_type']::query()->create();
-            }
-
-            $data['profile_id'] = $profile->id;
-
             $user = User::query()->create($data);
-
-            if ($data['profile_type'] == Member::class) {
-                $user->assignRole('member');
-            } else if ($data['profile_type'] == Company::class) {
-                $user->assignRole('company');
-            }
 
             $otp = $user->generateOTPCode();
 
@@ -61,10 +47,6 @@ class RegistrationController extends Controller
     {
         if (isset($data['avatar'])) {
             $data['avatar'] = uploadFile($data['avatar'], 'users/avatars');
-        }
-
-        if (isset($data['profile']['tax_card'])) {
-            $data['profile']['tax_card'] = uploadFile($data['profile']['tax_card'], 'users/tax_card');
         }
         return $data;
     }

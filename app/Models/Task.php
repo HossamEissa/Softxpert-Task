@@ -31,10 +31,6 @@ class Task extends Model
         'status' => TaskStatusEnum::class,
     ];
 
-    protected $searchableFields = ['title', 'description'];
-    protected $sortableFields = ['id', 'title', 'due_date', 'status', 'created_at'];
-    protected $filterableFields = ['status', 'assignee_id', 'created_by', 'due_date'];
-
     ####################################### Relations ###################################################
 
 
@@ -73,6 +69,40 @@ class Task extends Model
     ################################ End Accessors and Mutators #########################################
 
     ####################################### Helper Methods ##############################################
+
+   
+    protected function getSearchableFields(): array
+    {
+        return [
+            'fields' => ['title', 'description'],
+        ];
+    }
+
+   
+    protected function getFilterableFields(): array
+    {
+        return [
+            'fields' => [
+                'status' => ['operator' => '='],
+                'assignee_id' => ['operator' => '='],
+                'created_by' => ['operator' => '='],
+            ],
+            'date_ranges' => [
+                'due_date' => [
+                    'start_key' => 'due_date_from',
+                    'end_key' => 'due_date_to',
+                ],
+            ],
+        ];
+    }
+
+    
+    protected function getSortableFields(): array
+    {
+        return ['id', 'due_date', 'created_at'];
+    }
+
+
 
 
     public function allDependenciesCompleted(): bool

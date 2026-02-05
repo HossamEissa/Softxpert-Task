@@ -18,12 +18,9 @@ class EmailVerificationController extends Controller
     public function verifyEmail(EmailVerificationRequest $request)
     {
         $data = $request->validated();
-
-        if (isset($data['phone_number'])) {
-            $user = User::query()->where('phone_number', $data['phone_number'])->first();
-        } else {
-            $user = User::where('email', $data['email'])->first();
-        }
+        
+        $user = User::where('email', $data['email'])->first();
+       
 
         if ($user->code != $data['code']) {
             return $this->errorNotFound(__("The OTP code you entered is incorrect ."));
@@ -33,7 +30,6 @@ class EmailVerificationController extends Controller
             return $this->errorNotFound(__("The OTP code you entered is Expired."));
         }
 
-        $user->load('profile');
 
         $deviceName = $request->post('device_name', $request->userAgent());
         $final = [

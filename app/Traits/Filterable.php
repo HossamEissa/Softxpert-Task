@@ -131,10 +131,11 @@ trait Filterable
 
         if (isset($filters[$startKey]) && $filters[$startKey] !== '') {
             $builder->whereDate($column, '>=', $filters[$startKey]);
-        } else if (isset($filters[$endKey]) && $filters[$endKey] !== '') {
+        }
+        
+        if (isset($filters[$endKey]) && $filters[$endKey] !== '') {
             $builder->whereDate($column, '<=', $filters[$endKey]);
         }
-
     }
 
     /**

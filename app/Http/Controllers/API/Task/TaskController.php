@@ -7,6 +7,7 @@ use App\Http\Requests\API\Task\AssignTaskRequest;
 use App\Http\Requests\API\Task\CreateTaskRequest;
 use App\Http\Requests\API\Task\UpdateTaskRequest;
 use App\Http\Requests\API\Task\UpdateTaskStatusRequest;
+use App\Http\Resources\API\TaskCollection;
 use App\Http\Resources\API\TaskResource;
 use App\Models\Task;
 use App\Services\TaskService;
@@ -31,21 +32,16 @@ class TaskController extends Controller
 
         $user = $request->user();
 
-        // Check if user has permission to view all tasks (manager)
-        if ($user->hasPermissionTo('task.view-all')) {
-            $tasks = $this->taskService->getAllTasks();
-        } else {
-            // User can only see their assigned tasks
-            $tasks = $this->taskService->getUserTasks($user->id);
-        }
+        $query = $user->hasPermissionTo('task.view-all') ? Task::query() : Task::where('assignee_id', $user->id);
 
-        // Apply search, filter, sort from traits
-        $tasks = $tasks->search($request->search ?? '')
-            ->filter($request->all())
-            ->sort($request->sort_by ?? 'created_at', $request->sort_order ?? 'desc')
+        $query->with(['dependencies', 'creator', 'assignee']);
+
+        $tasks = $query->search()
+            ->sort()
+            ->filter()
             ->dynamicPaginate();
 
-        return $this->respondWithCollection(TaskResource::collection($tasks));
+        return $this->respondWithRetrieved(new TaskCollection($tasks));
     }
 
     // Done
@@ -54,7 +50,7 @@ class TaskController extends Controller
         try {
             $task = $this->taskService->createTask($request->validated(), Auth::id());
 
-            return $this->respondWithItem(new TaskResource($task), 'Task created successfully');
+            return $this->respondWithCreated(new TaskResource($task), 'Task created successfully');
         } catch (\Throwable $e) {
             return $this->errorStatus($e->getMessage());
         }
@@ -67,7 +63,7 @@ class TaskController extends Controller
 
         $task->load(['dependencies', 'dependents', 'creator', 'assignee']);
 
-        return $this->respondWithItem(new TaskResource($task));
+        return $this->respondWithRetrieved(new TaskResource($task));
     }
 
     // Done
@@ -76,7 +72,7 @@ class TaskController extends Controller
         try {
             $task = $this->taskService->updateTask($task, $request->validated());
 
-            return $this->respondWithItem(new TaskResource($task), 'Task updated successfully');
+            return $this->respondWithUpdated(new TaskResource($task), 'Task updated successfully');
         } catch (Exception $e) {
             return $this->setStatusCode(400)->errorStatus($e->getMessage());
         }
@@ -99,29 +95,13 @@ class TaskController extends Controller
             return $this->setStatusCode(400)->errorStatus($e->getMessage());
         }
     }
-
+    // Done
     public function updateStatus(UpdateTaskStatusRequest $request, Task $task): JsonResponse
     {
-
-        $this->authorize('updateStatus', $task);
-
         try {
             $task = $this->taskService->updateTaskStatus($task, $request->status);
 
             return $this->respondWithItem(new TaskResource($task), 'Task status updated successfully');
-        } catch (Exception $e) {
-            return $this->setStatusCode(400)->errorStatus($e->getMessage());
-        }
-    }
-
-    public function destroy(Request $request, Task $task): JsonResponse
-    {
-        $this->authorize('delete', $task);
-
-        try {
-            $this->taskService->deleteTask($task);
-
-            return $this->respondWithDeleted('Task deleted successfully');
         } catch (Exception $e) {
             return $this->setStatusCode(400)->errorStatus($e->getMessage());
         }

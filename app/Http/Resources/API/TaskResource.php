@@ -27,9 +27,9 @@ class TaskResource extends JsonResource
             'assignee' => new UserResource($this->whenLoaded('assignee')),
             'created_by' => $this->created_by,
             'creator' => new UserResource($this->whenLoaded('creator')),
+            'all_dependencies_completed' => $this->when($this->relationLoaded('dependencies'), fn() => $this->allDependenciesCompleted()),
             'dependencies' => TaskDependencyResource::collection($this->whenLoaded('dependencies')),
             'dependents' => DependentTaskResource::collection($this->whenLoaded('dependents')),
-            'all_dependencies_completed' => $this->when($this->relationLoaded('dependencies'), fn() => $this->allDependenciesCompleted()),
             'created_at' => $this->created_at?->format('Y-m-d H:i:s'),
             'updated_at' => $this->updated_at?->format('Y-m-d H:i:s'),
         ];

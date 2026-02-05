@@ -26,7 +26,7 @@ class ResetPasswordRequest extends FormRequest
             'email' => 'required_without:phone_number|email|exists:users,email',
             'phone_number' => 'required_without:email|string',
             'code' => 'required|digits:4',
-            'password' => ['required', 'string', 'confirmed', 'min:8' , Password::min(8)->letters()->symbols()->numbers()->mixedCase()],
+            'password' => ['required', 'string', 'confirmed', 'min:8' , Password::min(8)->letters()->numbers()->mixedCase()],
         ];
     }
 }

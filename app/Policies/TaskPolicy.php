@@ -4,6 +4,7 @@ namespace App\Policies;
 
 use App\Models\Task;
 use App\Models\User;
+use App\Enum\TaskStatusEnum;
 
 class TaskPolicy
 {
@@ -20,12 +21,10 @@ class TaskPolicy
      */
     public function view(User $user, Task $task): bool
     {
-        // Managers with task.view-all can view any task
         if ($user->hasPermissionTo('task.view-all')) {
             return true;
         }
 
-        // Users can view tasks assigned to them
         return $user->hasPermissionTo('task.view') && $task->assignee_id === $user->id;
     }
 
@@ -53,17 +52,13 @@ class TaskPolicy
         return $user->hasPermissionTo('task.delete');
     }
 
-    /**
-     * Determine whether the user can assign the task.
-     */
+   
     public function assign(User $user, Task $task): bool
     {
         return $user->hasPermissionTo('task.assign');
     }
 
-    /**
-     * Determine whether the user can update the task status.
-     */
+   
     public function updateStatus(User $user, Task $task): bool
     {
         if ($user->hasPermissionTo('task.update')) {

@@ -38,8 +38,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('tasks/{task}/assign', [TaskController::class, 'assign']);
 
-    // Update task status (users and managers - requires task.update-status permission)
     Route::patch('tasks/{task}/status', [TaskController::class, 'updateStatus']);
+    
 ######################################## End Task Management ##############################
 
 });

@@ -11,7 +11,7 @@ use Illuminate\Validation\Rules\Password;
 
 class RegistrationRequest extends FormRequest
 {
-    protected ProfileTypeRequest $profileTypeRequest;
+
 
     /**
      * Determine if the user is authorized to make this request.
@@ -28,13 +28,12 @@ class RegistrationRequest extends FormRequest
      */
     public function rules(): array
     {
-        return array_merge($this->profileTypeRequest->rules(), [
+        return [
             'avatar' => ['nullable', 'image'],
             'name' => ['required', 'string'],
             'email' => ['required', 'email', 'unique:users,email'],
-            'status' => ['required', 'string'],
-            'password' => ['required', 'string', 'confirmed', 'min:8', Password::min(8)->letters()->symbols()->numbers()->mixedCase()->uncompromised()],
-        ]);
+            'password' => ['required', 'string', 'confirmed', 'min:8', Password::min(8)->letters()->numbers()->mixedCase()],
+        ];
     }
 
 }

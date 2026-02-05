@@ -13,6 +13,8 @@ class TaskService
     public function createTask(array $data, int $createdBy): Task
     {
         return DB::transaction(function () use ($data, $createdBy) {
+            $data['created_by'] = $createdBy;
+            
             $task = Task::create($data);
 
             if (!empty($data['dependency_ids'])) {

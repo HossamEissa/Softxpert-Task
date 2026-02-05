@@ -5,7 +5,7 @@ namespace App\Http\Requests\API\Task;
 use App\Enum\TaskStatusEnum;
 use App\Models\Task;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Enum;
 
 class UpdateTaskStatusRequest extends FormRequest
 {
@@ -14,38 +14,28 @@ class UpdateTaskStatusRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        $task = $this->route('task');
+        return $this->user()->can('updateStatus', $task);
     }
 
     /**
      * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
         return [
-            'status' => [
-                'required',
-                'string',
-                Rule::in([
-                    TaskStatusEnum::InProgress->value,
-                    TaskStatusEnum::Completed->value,
-                    TaskStatusEnum::Cancelled->value,
-                    TaskStatusEnum::Delayed->value,
-                ]),
-            ],
+            'status' => ['required', new Enum(TaskStatusEnum::class)],
         ];
     }
 
     /**
-     * Custom validation messages
+     * Custom validation messages.
      */
     public function messages(): array
     {
         return [
             'status.required' => 'Status is required',
-            'status.in' => 'Invalid status value',
+            'status.enum' => 'Invalid status value',
         ];
     }
 
@@ -55,16 +45,29 @@ class UpdateTaskStatusRequest extends FormRequest
     public function withValidator($validator)
     {
         $validator->after(function ($validator) {
-            $taskId = $this->route('task');
-            $task = Task::with('dependencies')->find($taskId);
+            $task = $this->route('task');
             $newStatus = $this->status;
             $user = $this->user();
 
-            if (!$task) {
-                return;
+            if (!$task || !$newStatus) return;
+
+            $isManager = $user->hasPermissionTo('task.update');
+
+            if (!$isManager) {
+                $allowedUserStatuses = [
+                    TaskStatusEnum::InProgress->value,
+                    TaskStatusEnum::Completed->value,
+                ];
+
+                if (!in_array($newStatus, $allowedUserStatuses)) {
+                    $validator->errors()->add(
+                        'status',
+                        'Users can only update status to In Progress or Completed.'
+                    );
+                    return;
+                }
             }
 
-            // Check if user is trying to change status from completed/delayed/cancelled
             $restrictedStatuses = [
                 TaskStatusEnum::Completed->value,
                 TaskStatusEnum::Delayed->value,
@@ -72,29 +75,25 @@ class UpdateTaskStatusRequest extends FormRequest
             ];
 
             if (in_array($task->status->value, $restrictedStatuses)) {
-                // Check if user has manager role (can change these statuses)
-                $hasManagerPermission = $user->hasPermissionTo('task.assign') || $user->hasRole('manager');
-                
-                if (!$hasManagerPermission) {
+                if (!$isManager) {
                     $validator->errors()->add(
                         'status',
-                        'Only managers can change the status of completed, delayed, or cancelled tasks'
+                        "Cannot update status. This task is currently {$task->status->name}. Only managers can change the status of completed, delayed, or cancelled tasks."
                     );
                     return;
                 }
             }
-
-            // If trying to mark as completed, validate all dependencies are completed
+        
             if ($newStatus === TaskStatusEnum::Completed->value) {
-                if (!$task->allDependenciesCompleted()) {
-                    $incompleteDependencies = $task->dependencies()
-                        ->where('status', '!=', TaskStatusEnum::Completed->value)
-                        ->get(['id', 'title', 'status']);
-                    
-                    $taskTitles = $incompleteDependencies->pluck('title')->implode(', ');
+                $incompleteDependencies = $task->dependencies
+                    ->where('status', '!=', TaskStatusEnum::Completed->value)
+                    ->pluck('title')
+                    ->implode(', ');
+
+                if (!empty($incompleteDependencies)) {
                     $validator->errors()->add(
                         'status',
-                        "Cannot mark task as completed. The following dependency tasks are not completed: {$taskTitles}"
+                        "Cannot mark task as completed. The following dependency tasks are not completed: {$incompleteDependencies}"
                     );
                 }
             }
