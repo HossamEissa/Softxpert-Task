@@ -37,21 +37,4 @@ class AssignTaskRequest extends FormRequest
             'assignee_id.exists' => 'The selected user does not exist',
         ];
     }
-
-    /**
-     * Additional validation after rules pass
-     */
-    public function withValidator($validator)
-    {
-        $validator->after(function ($validator) {
-            $task = $this->route('task');
-            
-            if ($task && $task->assignee_id !== null) {
-                $validator->errors()->add(
-                    'task',
-                    'This task is already assigned.'
-                );
-            }
-        });
-    }
 }
