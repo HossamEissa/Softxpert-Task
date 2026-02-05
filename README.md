@@ -145,6 +145,32 @@ API available at: `http://localhost:8000`
 
 ---
 
+## Testing
+
+**101 passing tests** using Pest PHP covering authentication, CRUD operations, dependencies, permissions, and business logic.
+
+### Running Tests
+
+```bash
+# With Docker
+docker-compose exec app php artisan test
+
+# Without Docker
+php artisan test
+```
+
+### Test Coverage
+- Authentication (8 tests) - Registration, login, logout
+- Task CRUD (13 tests) - Create, read, update with permissions
+- Dependencies (6 tests) - Assignment, validation, synchronization
+- Status Management (10 tests) - Transitions, completion checks
+- Circular Dependencies (6 tests) - Prevention and detection
+- Role Permissions (24 tests) - RBAC and policy testing
+- Unit Tests (26 tests) - Models and services
+- Scheduled Tasks (6 tests) - Overdue detection
+
+---
+
 ## Docker Commands Reference
 
 ### Managing Containers
@@ -461,45 +487,6 @@ php artisan migrate:fresh --seed
 
 ---
 
-## Environment Variables
-
-### Required Configuration
-```env
-# Application
-APP_NAME=Task
-APP_ENV=local
-APP_DEBUG=true
-APP_URL=http://localhost:8000
-
-# Database (Docker)
-DB_CONNECTION=mysql
-DB_HOST=db
-DB_PORT=3306
-DB_DATABASE=softxpert_task
-DB_USERNAME=root
-DB_PASSWORD=root
-
-# Queue & Cache
-QUEUE_CONNECTION=database
-CACHE_STORE=database
-SESSION_DRIVER=database
-
-# Mail (Development - logs to file)
-MAIL_MAILER=log
-
-# Mail (Production - example with Gmail)
-MAIL_MAILER=smtp
-MAIL_HOST=smtp.gmail.com
-MAIL_PORT=587
-MAIL_USERNAME=your-email@gmail.com
-MAIL_PASSWORD=your-app-password
-MAIL_ENCRYPTION=tls
-MAIL_FROM_ADDRESS=your-email@gmail.com
-MAIL_FROM_NAME="${APP_NAME}"
-```
-
----
-
 ## Project Structure
 
 ```
@@ -551,32 +538,6 @@ database/
 1. Login as user
 2. Try to create task (should fail - managers only)
 3. Try to update unassigned task (should fail)
-
----
-
-## Testing
-
-**101 passing tests** using Pest PHP covering authentication, CRUD operations, dependencies, permissions, and business logic.
-
-### Running Tests
-
-```bash
-# With Docker
-docker-compose exec app php artisan test
-
-# Without Docker
-php artisan test
-```
-
-### Test Coverage
-- Authentication (8 tests) - Registration, login, logout
-- Task CRUD (13 tests) - Create, read, update with permissions
-- Dependencies (6 tests) - Assignment, validation, synchronization
-- Status Management (10 tests) - Transitions, completion checks
-- Circular Dependencies (6 tests) - Prevention and detection
-- Role Permissions (24 tests) - RBAC and policy testing
-- Unit Tests (26 tests) - Models and services
-- Scheduled Tasks (6 tests) - Overdue detection
 
 ---
 
