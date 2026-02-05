@@ -11,13 +11,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 
-###################################### Drop-Down ##########################################
-Route::prefix('list')->group(function () {
-
-});
-###################################### End Drop-Down ##########################################
-
-
 ################################# Authentication ##############################################
 Route::middleware(['guest'])->group(function () {
     Route::post('register', [RegistrationController::class, 'register']);

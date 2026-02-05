@@ -2,8 +2,6 @@
 
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -45,7 +43,7 @@ if (!function_exists('uploadFile')) {
 
 
 if (!function_exists('handleUploadedFiles')) {
-    function handleUploadedFiles(Request $request, mixed $data, array $names, $disk = null, \Illuminate\Database\Eloquent\Model $updatedRow = null): mixed
+    function handleUploadedFiles(Request $request, mixed $data, array $names, $disk = null, ?Model $updatedRow = null): mixed
     {
         $disk = $disk ?? config('filesystems.default');
         foreach ($names as $name) {
