@@ -32,7 +32,6 @@ A RESTful API for managing tasks with automatic dependency handling, role-based 
 
 **Use the automated setup script:**
 ```bash
-chmod +x docker-setup.sh
 ./docker-setup.sh
 ```
 
